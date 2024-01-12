@@ -3,13 +3,15 @@ console.log("Loaded learnn.js script!")
 
 async function scrape() {
 
-    var trascriptionTab = document.getElementsByClassName("transcriptionTab_transcriptText__zoErO")
-    var titleTab = document.getElementsByClassName("playerSideContent_title__tpgxr")
-    var title = titleTab[0].textContent || titleTab[0].innerText;
+    const transcriptionTab = document.getElementsByClassName("transcriptionTab_transcriptText__zoErO");
+    const titleTab = document.getElementsByClassName("playerSideContent_title__tpgxr");
+    const title = titleTab[0].textContent || titleTab[0].innerText;
     console.log("Scraping transcription for video: " + title)
-    if(trascriptionTab.length > 0) {
+
+
+    if(transcriptionTab.length > 0) {
         console.log("Found transcription tab!")
-        var contentElement = trascriptionTab[0];
+        var contentElement = transcriptionTab[0];
         var tags = contentElement.querySelectorAll('*');
         // Crea una stringa per contenere il testo
         var textToSave = '';
@@ -26,7 +28,7 @@ async function scrape() {
         });
 
         // Crea un oggetto Blob contenente il testo
-        var blob = new Blob([textToSave], { type: 'text/plain' });
+        const blob = new Blob([textToSave], { type: 'text/plain' });
 
         // Crea un link temporaneo per il download
         var link = document.createElement('a');
@@ -44,8 +46,6 @@ async function scrape() {
     } else {
         console.error("Could not find transcription tab!")
     }
-    //var content = trascriptionTab[0].innerHTML
-    //console.log(content);
 }
 
 
