@@ -24,7 +24,7 @@ async function scrape() {
                 textToSave += " "
                 textToSave += tag.textContent || tag.innerText;
             }
-            console.log(tag.textContent || tag.innerText);
+            //console.log(tag.textContent || tag.innerText);
         });
 
         // Crea un oggetto Blob contenente il testo
@@ -35,7 +35,7 @@ async function scrape() {
         link.href = URL.createObjectURL(blob);
 
         // Chiedi all'utente dove vuole salvare il file
-        link.download = prompt("Inserisci il nome del file:", `${title}.txt`) || `${title}.txt`;
+        link.download = `${title}.txt`
 
         // Aggiungi il link all'elemento body e simula il click
         document.body.appendChild(link);
