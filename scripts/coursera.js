@@ -60,8 +60,24 @@ function getLessonName() {
     }
 }
 
+function getTabDownloadElement() {
+    var divIdPrefix = "cds-react-aria-";
+    var divs = document.querySelectorAll('[id^="' + divIdPrefix + '"]');
+    console.log("Found " + divs.length + " divs with id starting with " + divIdPrefix);
+// Cerca il div specifico tra quelli trovati
+    var targetDiv = null;
+    for (var i = 0; i < divs.length; i++) {
+        console.log("Found div with id: " + divs[i].id)
+        if (divs[i].id.includes("-panel-DOWNLOADS")) {
+            targetDiv = divs[i];
+            break;
+        }
+    }
+    return targetDiv;
+}
+
 async function scrapeCoursera() {
-    const tabDownloadElement = document.getElementById('cds-react-aria-42-panel-DOWNLOADS');
+    const tabDownloadElement = getTabDownloadElement()
     if (tabDownloadElement) {
         console.log("Tab download Found!");
         const tabDownloadHtmlContent = tabDownloadElement.innerHTML;
@@ -72,7 +88,7 @@ async function scrapeCoursera() {
         const lessonName = getLessonName()
         await downloadFiles(linkElements, lessonName);
     } else {
-        console.log("L'elemento con id 'cds-react-aria-42-panel-DOWNLOADS' non esiste.");
+        console.log("L'elemento tab download non esiste.");
     }
 
 }
