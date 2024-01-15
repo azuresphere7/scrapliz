@@ -1,5 +1,6 @@
 console.log("Loaded all.js scrapliz script!")
 
+
 function getCurrentHostname() : string | null {
     const url = window.location.href;
     try {

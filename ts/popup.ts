@@ -1,4 +1,4 @@
-
+import {sendMessage} from './util/messager.js';
 
 
 function execScrapeLearnn() {
@@ -30,7 +30,8 @@ document.getElementById("btnScrapeCoursera").addEventListener("click", execScrap
 
 function init() {
     console.log("Loaded popup.js script!")
-    console.log("Current hostname: " + getCurrentHostname())
+    //console.log("Current hostname: " + getCurrentHostname())
+    sendMessage()
 }
 
 init()
