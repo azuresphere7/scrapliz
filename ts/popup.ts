@@ -1,4 +1,4 @@
-console.log("Loaded popup.js script!")
+
 
 
 function execScrapeLearnn() {
@@ -26,3 +26,11 @@ function execScrapeCoursera() {
 document.getElementById("btnScrapeLearnn").addEventListener("click", execScrapeLearnn);
 // @ts-ignore
 document.getElementById("btnScrapeCoursera").addEventListener("click", execScrapeCoursera);
+
+
+function init() {
+    console.log("Loaded popup.js script!")
+    console.log("Current hostname: " + getCurrentHostname())
+}
+
+init()
