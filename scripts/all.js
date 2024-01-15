@@ -1,1 +1,2 @@
-console.log("Loaded all.js script!")
+"use strict";
+console.log("Loaded all.js scrapliz script!");
