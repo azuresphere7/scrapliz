@@ -1,5 +1,3 @@
-
-
 console.log("Loaded coursera.js script!")
 
 
@@ -38,7 +36,6 @@ async function downloadFiles(links, lessonName) {
         const url = link.href;
         console.log("Checking link: " + url)
         if (trackComponentValue !== undefined) {
-            // Esempio: Stampare il valore di data-track-component
             console.log("data-track-component = " + trackComponentValue);
             if(trackComponentValue === "download_video") {
                 console.log("Current link is a video. Downloading...")
@@ -55,13 +52,10 @@ async function downloadFiles(links, lessonName) {
 
 function getLessonName() {
     var elementiH1 = document.querySelectorAll('h1.cds-108.video-name.css-bbd009.cds-110');
-
-    // Verifica se è stato trovato almeno un elemento
     if (elementiH1.length > 0) {
         console.log("Found lesson name: " + elementiH1[0].textContent || elementiH1[0].innerText);
         return elementiH1[0].textContent || elementiH1[0].innerText;
     } else {
-        // Se nessun elemento è stato trovato, restituisci null o fai qualcos'altro in base alle tue esigenze
         return "lesson"
     }
 }
