@@ -1,3 +1,0 @@
-enum MessageType {
-    getHostname
-}
