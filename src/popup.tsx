@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { loggiz } from "./utils";
 import "./scss/body.scss";
+import "./scss/typeography.scss";
+import {getHostnameFromUrl} from "./util/urlutils";
 
 const Popup = () => {
+    const [hostname, setHostname] = useState<string>();
     const [count, setCount] = useState(0);
     const [currentURL, setCurrentURL] = useState<string>();
+
+
 
     useEffect(() => {
         chrome.action.setBadgeText({ text: count.toString() });
@@ -13,7 +18,13 @@ const Popup = () => {
 
     useEffect(() => {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            setCurrentURL(tabs[0].url);
+            console.log("Checking hostname...")
+            let tempUrl = tabs[0].url;
+            let hostname = getHostnameFromUrl(tempUrl);
+            setCurrentURL(tempUrl);
+            setHostname(hostname)
+            console.log("Current URL: ", tempUrl);
+            console.log("Hostname: ", hostname);
         });
     }, []);
 
@@ -31,17 +42,8 @@ const Popup = () => {
 
     return (
         <>
-            <ul style={{ minWidth: "700px" }}>
-                <li>Current URL: {currentURL}</li>
-                <li>Current Time: {new Date().toLocaleTimeString()}</li>
-            </ul>
-            <button
-                onClick={() => setCount(count + 1)}
-                style={{ marginRight: "5px" }}
-            >
-                count up
-            </button>
-            <button onClick={changeBackground}>change background</button>
+            <h1>Scrapliz</h1>
+            <h3>{hostname}</h3>
         </>
     );
 };
