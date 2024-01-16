@@ -1,0 +1,29 @@
+{
+  "name": "Scrapliz",
+  "version": "1.0.0",
+  "description": "Scraping data from various websites",
+  "manifest_version": 3,
+  "icons": {
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
+  "action": {
+    "default_icon": "images/icon-128.png",
+    "default_popup": "popup.html",
+    "default_title": "Scrapliz"
+  },
+  "content_scripts": [
+      {
+          "matches": ["<all_urls>"],
+          "js": ["js/vendor.js", "js/content_script.js"]
+      }
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"]
+}
