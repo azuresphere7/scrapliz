@@ -5,7 +5,8 @@ export function getHostnameFromUrl(url: string | undefined) : string {
     }
     try {
         const parsedUrl = new URL(url);
-        return parsedUrl.hostname;
+        const temp =  parsedUrl.hostname;
+        return temp.replace(/^www\./, '');
     } catch (error) {
         console.error("Errore durante il parsing dell'URL:", error);
         return "null";
