@@ -29,6 +29,11 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.(sa|sc|c)ss$/,
+                include: path.resolve(__dirname, "../src/scss"),
+                use: ["style-loader", "css-loader", "sass-loader"],
+            },
         ],
     },
     resolve: {
