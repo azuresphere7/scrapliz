@@ -7,14 +7,18 @@ import {getHostnameFromUrl} from "./util/urlutils";
 import {Scrap} from "./model/scrap";
 import {getScrapsFromHostname} from "./util/scraputils";
 import {BtnScrap} from "./components/btnScrap";
+import {SnackbarType} from "./model/snackbarType";
+import {SnackbarState} from "./model/snackbarState";
+import {Snackbar} from "./components/snackbar";
 
 const Popup = () => {
     const [hostname, setHostname] = useState<string>();
     const [count, setCount] = useState(0);
     const [currentURL, setCurrentURL] = useState<string>();
     const [scraps, setScraps] = useState<Scrap[]>([]);
+    const [snackbar, setSnackbar] = useState<SnackbarState>({ isOpen: false,  type: SnackbarType.INFO, text: ''});
 
-
+    /** Startup function on popup click */
     const init = () => {
         console.log("Initializing popup ...");
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -32,6 +36,14 @@ const Popup = () => {
         });
     }
 
+    const setSnackbarTimeout = () => {
+        setTimeout(() => { setSnackbar({ isOpen: false, type: SnackbarType.INFO, text: '' }); }, 3000);
+    }
+    const showSuccessSnackbar = (text: string) => {
+        setSnackbar({ isOpen: true, type: SnackbarType.SUCCESS, text: text });
+        setSnackbarTimeout();
+    }
+
     const updateBadgeText = () => {
         chrome.action.setBadgeText({text: count.toString()}).then(r =>{});
     }
@@ -44,11 +56,13 @@ const Popup = () => {
         <>
             <h1>Scrapliz</h1>
             <h3>{hostname}</h3>
+            <Snackbar isOpen={snackbar.isOpen} type={snackbar.type} text={snackbar.text} />
+
             <div className="container">
                 {
                     scraps.map((scrap, index) => {
                         return (
-                            <BtnScrap key={"23423"} id={""} name={scrap.name} hostname={scrap.hostname} description={""}></BtnScrap>
+                            <BtnScrap key={scrap.id} id={""} name={scrap.name} hostname={scrap.hostname} description={""}></BtnScrap>
                         )
                     })
                 }
