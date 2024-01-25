@@ -1,0 +1,21 @@
+body {
+  width: 300px;
+  min-height: 150px;
+  //padding: 30px;
+  background-color: #252525;
+  border-radius: 20px;
+  margin: 0;
+}
+
+.sectionTitle {
+  padding: 30px 30px 10px 30px;
+  background-color: #1d1d1d;
+}
+
+.container {
+  padding: 30px 30px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

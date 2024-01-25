@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { loggiz } from "./utils";
-import "./scss/body.scss";
+import "./scss/popup.scss";
 import "./scss/typeography.scss";
 import {getHostnameFromUrl} from "./util/urlutils";
 import {Scrap} from "./model/scrap";
@@ -54,17 +54,22 @@ const Popup = () => {
 
     return (
         <>
-            <h1>Scrapliz</h1>
-            <h3>{hostname}</h3>
+            <div className="sectionTitle">
+                <h1>Scrapliz</h1>
+                <h3>{hostname}</h3>
+            </div>
+
             <Snackbar isOpen={snackbar.isOpen} type={snackbar.type} text={snackbar.text} />
 
             <div className="container">
-                {
-                    scraps.map((scrap, index) => {
-                        return (
-                            <BtnScrap key={scrap.id} id={""} name={scrap.name} hostname={scrap.hostname} description={""}></BtnScrap>
-                        )
-                    })
+                { scraps.length != 0 ?
+                    (
+                        scraps.map((scrap, index) => {
+                            return (
+                                <BtnScrap key={scrap.id} id={""} name={scrap.name} hostname={scrap.hostname} description={""}></BtnScrap>
+                            )
+                        })
+                    ) : <p>No action found for this website!</p>
                 }
             </div>
         </>
