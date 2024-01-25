@@ -5,14 +5,16 @@ import "../scss/btnScrap.scss";
 import {sendScrapMessage} from "../util/messanger";
 
 
-export function BtnScrap(scrap: Scrap) {
+export interface BtnScrapProps {
+    scrap: Scrap;
+    onClick: () => void;
+}
 
-    const handleClick = () => {
-        sendScrapMessage(scrap);
-    };
+
+export function BtnScrap({ scrap, onClick }: BtnScrapProps) {
 
     return (
-        <button onClick={handleClick}>
+        <button onClick={onClick}>
             <span className="button_top">
                 {scrap.name}
             </span>

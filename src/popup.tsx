@@ -51,6 +51,13 @@ const Popup = () => {
     useEffect(() => { init() }, []);
     useEffect(() => { updateBadgeText() }, [count]);
 
+    const handleScrapClick = (scrap: Scrap) => {
+        console.log('Hai cliccato su', scrap.id);
+        showSuccessSnackbar("Scrap sent!")
+    };
+
+
+
 
     return (
         <>
@@ -66,7 +73,11 @@ const Popup = () => {
                     (
                         scraps.map((scrap, index) => {
                             return (
-                                <BtnScrap key={scrap.id} id={""} name={scrap.name} hostname={scrap.hostname} description={""}></BtnScrap>
+                                <BtnScrap
+                                    key={scrap.id}
+                                    scrap={scrap}
+                                    onClick={ () => handleScrapClick(scrap)}
+                                />
                             )
                         })
                     ) : <p>No action found for this website!</p>
