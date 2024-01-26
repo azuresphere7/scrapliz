@@ -19,10 +19,6 @@
     {
       "matches": ["<all_urls>"],
       "js": ["js/vendor.js", "js/content_script.js"]
-    },
-    {
-      "matches": ["https://example.com/"],
-      "js": ["./js/example.js"]
     }
   ],
   "background": {

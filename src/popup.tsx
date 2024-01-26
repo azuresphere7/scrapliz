@@ -10,9 +10,12 @@ import {BtnScrap} from "./components/btnScrap";
 import {SnackbarType} from "./model/snackbarType";
 import {SnackbarState} from "./model/snackbarState";
 import {Snackbar} from "./components/snackbar";
+import {sendScrapMessage} from "./util/messanger";
+import {ScriptResponse} from "./model/response";
 
 const Popup = () => {
     const [hostname, setHostname] = useState<string>();
+    const [operationActive, setOperationActive] = useState<boolean>(false);
     const [count, setCount] = useState(0);
     const [currentURL, setCurrentURL] = useState<string>();
     const [scraps, setScraps] = useState<Scrap[]>([]);
@@ -39,8 +42,14 @@ const Popup = () => {
     const setSnackbarTimeout = () => {
         setTimeout(() => { setSnackbar({ isOpen: false, type: SnackbarType.INFO, text: '' }); }, 3000);
     }
+
     const showSuccessSnackbar = (text: string) => {
         setSnackbar({ isOpen: true, type: SnackbarType.SUCCESS, text: text });
+        setSnackbarTimeout();
+    }
+
+    const showErrorSnackbar = (text: string) => {
+        setSnackbar({ isOpen: true, type: SnackbarType.ERROR, text: text });
         setSnackbarTimeout();
     }
 
@@ -53,7 +62,15 @@ const Popup = () => {
 
     const handleScrapClick = (scrap: Scrap) => {
         console.log('Hai cliccato su', scrap.id);
-        showSuccessSnackbar("Scrap sent!")
+
+        let onResponse = (response: ScriptResponse) => {
+            if(response.resStatus) {
+                showSuccessSnackbar(response.message)
+            } else {
+                showErrorSnackbar(response.message)
+            }
+        }
+        sendScrapMessage(scrap, onResponse)
     };
 
 
@@ -76,6 +93,7 @@ const Popup = () => {
                                 <BtnScrap
                                     key={scrap.id}
                                     scrap={scrap}
+                                    operationActive={operationActive}
                                     onClick={ () => handleScrapClick(scrap)}
                                 />
                             )
