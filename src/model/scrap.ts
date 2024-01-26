@@ -1,20 +1,17 @@
 import {exampleScrapDesc} from "../script/example";
+import {ScriptResponse} from "./response";
 
 export interface Scrap {
     id: string;
     name: string;
     hostname: string;
     description: string;
-    exec: () => Promise<void>;
+    exec: () => Promise<ScriptResponse>;
 }
 
 
 export const scrapList: Scrap[] = [
     {
-        id: "example_scrape_title",
-        name: "Get desc",
-        hostname: "example.com",
-        description: "Desc text scrap from example.com",
-        exec: async () => { return await exampleScrapDesc() }
+        id: "example_test", name: "Test Scrap", hostname: "example.com", description: "Scrap test", exec: async () => { return exampleScrapDesc(); }
     },
 ]
