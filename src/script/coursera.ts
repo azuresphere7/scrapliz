@@ -15,6 +15,28 @@ function removeTitleSubString(str: string) {
     return str;
 }
 
+function getLessonNameFromTitle() {
+    console.log("Searching for lesson name...")
+    const title = document.title;
+    console.log("Found title: " + title)
+    return removeTitleSubString(title);
+}
+
+function getLessonName() {
+    console.log("Searching for lesson name...")
+    const elementiH1 = document.querySelectorAll('h1');
+    if (elementiH1.length > 0) {
+        // @ts-ignore
+        console.log("Found lesson name: " + elementiH1[0].textContent || elementiH1[0].innerText);
+        // @ts-ignore
+        return elementiH1[0].textContent || elementiH1[0].innerText;
+    } else {
+        console.error("Could not find lesson name.")
+        return "lesson"
+    }
+}
+
+
 async function extractAndDwTranscriptionText(tempDiv: HTMLDivElement, lessonName: string ) {
     const phrasesDiv = tempDiv.querySelector('.phrases');
     console.log("Started downloading transcript content...")
@@ -141,26 +163,9 @@ function getTabTranscriptionElement() {
     return targetDiv;
 }
 
-function getLessonName() {
-    console.log("Searching for lesson name...")
-    const elementiH1 = document.querySelectorAll('h1');
-    if (elementiH1.length > 0) {
-        // @ts-ignore
-        console.log("Found lesson name: " + elementiH1[0].textContent || elementiH1[0].innerText);
-        // @ts-ignore
-        return elementiH1[0].textContent || elementiH1[0].innerText;
-    } else {
-        console.error("Could not find lesson name.")
-        return "lesson"
-    }
-}
 
-function getLessonNameFromTitle() {
-    console.log("Searching for lesson name...")
-    const title = document.title;
-    console.log("Found title: " + title)
-    return removeTitleSubString(title);
-}
+
+
 
 export async function courseraScrapLessonFiles(): Promise<ScriptResponse> {
     const tabDownloadElement = getTabDownloadElement()
@@ -205,7 +210,8 @@ export async function courseraScrapTranscriptionText() {
     }
 }
 
-export async function courseraScrapLessonText() {
+
+export async function courseraScrapMdLessonText() {
     const targetDiv = document.querySelector('div[data-testid="cml-viewer"].css-1kgqbsw');
     if (!targetDiv) {
         console.error("Target div not found. Make sure you are on the correct page.");
@@ -214,8 +220,12 @@ export async function courseraScrapLessonText() {
 
     const childElements = targetDiv.children;
     let markdownContent = '';
+    const imagePromises : any[] = [];
+    let imageCounter = 0;
+    //const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const proxyUrl = 'https://api.allorigins.win/raw?url=';
 
-    function convertToMarkdown(element:any) {
+    function convertToMarkdown(element:any) : any {
         switch (element.tagName.toLowerCase()) {
             case 'h1':
                 return `# ${element.textContent}\n\n`;
@@ -231,14 +241,41 @@ export async function courseraScrapLessonText() {
                 // @ts-ignore
                 return Array.from(element.children).map(li => `- ${li.textContent}`).join('\n') + '\n\n';
             // Aggiungi altri casi se necessario
+            case 'img':
+                console.log("Downloading image for current coursera lesson text...")
+                imageCounter++;
+                const imageUrl = element.src;
+                const imageName = `${getLessonNameFromTitle()} - image ${imageCounter}.jpg`;
+                //imagePromises.push(downloadImage(proxyUrl + imageUrl, imageName));
+                imagePromises.push(downloadImage(proxyUrl + encodeURIComponent(imageUrl), imageName));
+                return `![Image ${imageCounter}](./${imageName})\n\n`;
             default:
-                return element.outerHTML;  // Fallback per elementi non riconosciuti
+                console.log("Element not recognized: ", element.outerHTML)
+                //return element.outerHTML;  // Fallback per elementi non riconosciuti
+                return Array.from(element.childNodes).map(convertToMarkdown).join('');
         }
     }
+
+    async function downloadImage(url: string, name: string) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = objectUrl;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(objectUrl);
+    }
+
     markdownContent += `# ${getLessonNameFromTitle()}\n\n`;
     for (const el of childElements) {
         markdownContent += convertToMarkdown(el);
     }
+
+    // Aspetta il download di tutte le immagini
+    await Promise.all(imagePromises);
 
     // Crea un blob e scarica il file markdown
     const blob = new Blob([markdownContent], { type: 'text/markdown' });
