@@ -14,7 +14,8 @@ export function BtnScrap({ scrap, operationActive, onClick }: BtnScrapProps) {
 
     return (
         <button onClick={onClick} disabled={operationActive}>
-            {operationActive ? <span className="spinner">active</span> : <span className="button_top">{scrap.name}</span>}
+            {operationActive ? <span className="spinner">active</span> :
+                <span className="button_top">{scrap.name}</span>}
         </button>
     )
 }

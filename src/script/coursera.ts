@@ -3,6 +3,14 @@ import {ScriptResponse} from "../model/response";
 console.log("Loaded coursera.ts")
 
 
+function removeTitleSubString(str: string) {
+    const substring = "_Coursera";
+    if (str.includes(substring)) {
+        return str.replace(substring, '');
+    }
+    return str;
+}
+
 async function extractAndDwTranscriptionText(tempDiv: HTMLDivElement, lessonName: string ) {
     const phrasesDiv = tempDiv.querySelector('.phrases');
     console.log("Started downloading transcript content...")
@@ -147,7 +155,7 @@ function getLessonNameFromTitle() {
     console.log("Searching for lesson name...")
     const title = document.title;
     console.log("Found title: " + title)
-    return title;
+    return removeTitleSubString(title);
 }
 
 export async function courseraScrapLessonFiles(): Promise<ScriptResponse> {
@@ -191,4 +199,53 @@ export async function courseraScrapTranscriptionText() {
         console.error("Could not find tab transcript element.")
         return {resStatus: false, resData: null, message: "Could not find tab transcript element."}
     }
+}
+
+export async function courseraScrapLessonText() {
+    const targetDiv = document.querySelector('div[data-testid="cml-viewer"].css-1kgqbsw');
+    if (!targetDiv) {
+        console.error("Target div not found. Make sure you are on the correct page.");
+        return {resStatus: false, resData: null, message: "Could not find lesson text. Make sure you are on the correct page."}
+    }
+
+    const childElements = targetDiv.children;
+    let markdownContent = '';
+
+    function convertToMarkdown(element:any) {
+        switch (element.tagName.toLowerCase()) {
+            case 'h1':
+                return `# ${element.textContent}\n\n`;
+            case 'h2':
+                return `## ${element.textContent}\n\n`;
+            case 'h3':
+                return `### ${element.textContent}\n\n`;
+            case 'h4':
+                return `#### ${element.textContent}\n\n`;
+            case 'p':
+                return `${element.textContent}\n\n`;
+            case 'ul':
+                // @ts-ignore
+                return Array.from(element.children).map(li => `- ${li.textContent}`).join('\n') + '\n\n';
+            // Aggiungi altri casi se necessario
+            default:
+                return element.outerHTML;  // Fallback per elementi non riconosciuti
+        }
+    }
+    markdownContent += `# ${getLessonNameFromTitle()}\n\n`;
+    for (const el of childElements) {
+        markdownContent += convertToMarkdown(el);
+    }
+
+    // Crea un blob e scarica il file markdown
+    const blob = new Blob([markdownContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = getLessonNameFromTitle() + '.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    return {resStatus: true, resData: null, message: "Downloaded lesson text."}
 }

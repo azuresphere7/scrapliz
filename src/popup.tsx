@@ -96,6 +96,7 @@ const Popup = () => {
                                     operationActive={operationActive}
                                     onClick={ () => handleScrapClick(scrap)}
                                 />
+
                             )
                         })
                     ) : <p>No action found for this website!</p>
