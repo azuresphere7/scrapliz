@@ -5,8 +5,12 @@ console.log("Loaded coursera.ts")
 
 function removeTitleSubString(str: string) {
     const substring = "_Coursera";
+    const substring2 = " | Coursera";
     if (str.includes(substring)) {
         return str.replace(substring, '');
+    }
+    if (str.includes(substring2)) {
+        return str.replace(substring2, '');
     }
     return str;
 }
