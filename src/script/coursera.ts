@@ -219,25 +219,51 @@ export async function courseraScrapMdLessonText() {
     }
 
     const childElements = targetDiv.children;
+    //const childElements = targetDiv.querySelectorAll('*');
     let markdownContent = '';
     const imagePromises : any[] = [];
     let imageCounter = 0;
     //const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const proxyUrl = 'https://api.allorigins.win/raw?url=';
 
+    function sanitizeFileName(fileName:string) {
+        return fileName.replace(/\s+/g, '_').replace(/:/g, '_');  // Sostituisce spazi e due punti con underscore
+    }
+
     function convertToMarkdown(element:any) : any {
         switch (element.tagName.toLowerCase()) {
             case 'h1':
+                console.log("Found h1 element...")
                 return `# ${element.textContent}\n\n`;
             case 'h2':
+                console.log("Found h2 element...")
                 return `## ${element.textContent}\n\n`;
             case 'h3':
+                console.log("Found h3 element...")
                 return `### ${element.textContent}\n\n`;
             case 'h4':
+                console.log("Found h4 element...")
                 return `#### ${element.textContent}\n\n`;
             case 'p':
-                return `${element.textContent}\n\n`;
+                console.log('Found p element...');
+                const aElement = element.querySelector('a');
+                if (aElement) {
+                    // @ts-ignore
+                    const linkText = Array.from(aElement.querySelectorAll('span')).map(span => span.textContent.trim()).join(' ');
+                    const href = aElement.href;
+                    console.log("Found link within p with text: " + linkText + " and href: " + href);
+                    return `[${linkText}](${href})\n\n`;
+                } else {
+                    return `${element.textContent.trim()}\n\n`;
+                }
+            case 'a':
+                // @ts-ignore
+                const linkText = Array.from(element.querySelectorAll('span')).map(span => span.textContent.trim()).join(' ');
+                const href = element.href;
+                console.log("Found link with text: " + linkText + " and href: " + href)
+                return `[${linkText}](${href})`;
             case 'ul':
+                console.log("Found ul element...")
                 // @ts-ignore
                 return Array.from(element.children).map(li => `- ${li.textContent}`).join('\n') + '\n\n';
             // Aggiungi altri casi se necessario
@@ -245,10 +271,10 @@ export async function courseraScrapMdLessonText() {
                 console.log("Downloading image for current coursera lesson text...")
                 imageCounter++;
                 const imageUrl = element.src;
-                const imageName = `${getLessonNameFromTitle()} - image ${imageCounter}.jpg`;
-                //imagePromises.push(downloadImage(proxyUrl + imageUrl, imageName));
-                imagePromises.push(downloadImage(proxyUrl + encodeURIComponent(imageUrl), imageName));
-                return `![Image ${imageCounter}](./${imageName})\n\n`;
+                const rawImageName = `${getLessonNameFromTitle()} - image ${imageCounter}.jpg`;
+                const sanitizedImageName = sanitizeFileName(rawImageName);
+                imagePromises.push(downloadImage(proxyUrl + encodeURIComponent(imageUrl), sanitizedImageName));
+                return `![Image ${imageCounter}](./${sanitizedImageName})\n\n`;
             default:
                 console.log("Element not recognized: ", element.outerHTML)
                 //return element.outerHTML;  // Fallback per elementi non riconosciuti
